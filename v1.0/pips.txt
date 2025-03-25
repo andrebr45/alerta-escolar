@@ -1,0 +1,53 @@
+pip install flask
+pip install flask-sqlalchemy
+pip install PyMuPDF
+pip install bcrypt
+pip install requests
+pip install pymysql
+
+
+heroku
+pip install gunicorn
+git status
+git add .
+git commit -m "versao"
+git push heroku
+
+arquivos
+requirements.txt - colocar bibliotecas
+pip freeze > requirements.txt
+Procfile - web: python app.py
+https://www.youtube.com/watch?v=LGkj6xA5bUc
+
+banco mysql
+heroku addons:create cleardb:ignite
+heroku addons:create jawsdb:kitefin
+heroku config --json | ConvertFrom-Json | Select-Object -Property JAWSDB_URL    
+
+
+
+he error message indicates that Heroku is unable to detect a valid package manager file (requirements.txt or Pipfile) in your project. The key issue here is the misspelled requeriments.txt file. Heroku expects requirements.txt (note the correct spelling).
+
+To resolve the issue, you can do the following:
+
+Rename the requeriments.txt file:
+
+bash
+Copiar código
+mv requeriments.txt requirements.txt
+Commit the changes to Git:
+
+bash
+Copiar código
+git add requirements.txt
+git commit -m "Fix spelling of requirements.txt"
+Push the changes to Heroku:
+
+bash
+Copiar código
+git push heroku main
+This should allow Heroku to correctly detect your dependencies and proceed with the build.
+
+https://codecanyon.net/
+https://gumroad.com/
+https://themeforest.net/
