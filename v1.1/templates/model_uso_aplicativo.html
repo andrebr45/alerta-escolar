@@ -1,0 +1,79 @@
+
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitação do Uso do Aplicativo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            justify-content: center;
+            display: flex;
+            width:100%;
+            text-align: center;
+        }
+        
+        td,
+        th {
+           
+            padding: 5px;
+            text-align: center;
+        }
+        
+        table {
+            border: 1px solid black;
+            border-spacing: 0;
+            
+        }
+        p { 
+            margin: 15px;
+            padding:25px;
+            text-align: justify;
+        }
+        #data {
+            text-align: right;
+        }
+        </style>
+</head>
+<body>
+        <div>
+            <img src="{{ url_for('static', filename='images/logo.png') }}" width="50">
+            <h2>Secretaria Municipal de Educação de Ubatuba</h2>
+            <br>
+            <h3>SOLICITAÇÃO DO USO DO APLICATIVO</h3>
+            <p><b>
+    
+                Solicito que o Gestor(a) ______________________________________________, Matrícula
+                ________________________, de CPF _________________________, Responsável por dirigir e gerenciar a seguinte Escola Municipal 
+                ____________________________________________________________________, nascido(a) em ____/____/________, na Cidade de _________________________, 
+                Estado de ___________. Tenha acesso ao Aplicativo Alerta Escolar para tornar o ambiente escolar mais seguro, ficando de sua
+                responsabilidade o acionamento do botão.
+    
+    
+            
+            
+
+    
+            </b></p>
+            Por ser verdade firmo a presente declaração.
+            <p id="data">Ubatuba, ____ de __________________de 20____.</p>
+    
+            <div><br><br><br></div>
+            <h3>______________________________________</h3>
+            <h3>Assinatura do Secretário(a)</h3>
+            <div><br><br></div>
+
+        </div>
+    
+        <div style="margin: 20%;">
+            <table>
+                <tr>
+                    <th>Secretaria Municipal de Educação<br>
+                    E-mail: educacao@ubatuba.sp.gov.br<br>
+                    Telefone: (12) 3834-4450</th>
+                </tr>
+                <tr><th>Endereço: R. Gastão Madeira, 101 - Centro, Ubatuba - SP, 11680-000</th></tr>
+            </table>
+        </div>
+</body>
+</html>

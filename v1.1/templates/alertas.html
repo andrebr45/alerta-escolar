@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block main_title%}Alertas{% endblock %}
+{% block first_title %}User{% endblock %}
+{% block sub_title %}Alertas{% endblock %}
+{% block title %}Alertas{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link href="{{ url_for('static', filename='styles/painel.css') }}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />  
+
+</head>
+<body>
+
+    <!-- Últimos Alertas -->
+    <div class="box-info" style="width: 100%; padding: 5px; display: flex;">
+        <div>
+            <h3 style="text-align: center;">Últimos alertas</h3>
+            <ul id="ultimosAlertasList">
+            </ul>
+        </div>
+        <div class="escolasmaissolicitadas">
+            <!-- Escolas que mais solicitam alertas -->
+            <h3 style="text-align: center;">Escolas que mais solicitam</h3>
+            <ul id="escolasMaisSolicitantesList">
+                
+            </ul>
+        </div> 
+    </div>
+
+    <script src="{{ url_for('static', filename='js/painel.js') }}"></script>
+     
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor de Alertas</title>
+    <style>
+        /* Container para gerenciar os alertas */
+        #alertContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-height: 300px;  /* Altura máxima para os alertas */
+            width: 250px;
+            overflow-y: auto;  /* Permite rolar caso haja mais de 4 alertas */
+            z-index: 1000;
+        }
+
+        /* Estilo básico para a notificação */
+        .alertNotification {
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .alertNotification button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Container para alertas -->
+    <div id="alertContainer"></div>
+
+    <script>
+        let alertAudio = new Audio("{{ url_for('static', filename='alerta.mp3') }}");
+        let alertTimeouts = [];
+        let activeAlerts = 0;  // Variável para contar os alertas ativos
+
+        // Função para tocar o som do alerta
+        function playAlertSound() {
+            if (activeAlerts > 0 && (alertAudio.paused || alertAudio.ended)) {
+                alertAudio.currentTime = 0;  // Reinicia o áudio
+                alertAudio.play().catch(error => {
+                    console.error('Erro ao tocar o som:', error);
+                });
+            }
+        }
+
+        // Função para mostrar o alerta
+        function showAlert(alerta) {
+            const alertContainer = document.createElement('div');
+            alertContainer.classList.add('alertNotification');
+            
+            const alertMessage = document.createElement('span');
+            alertMessage.textContent = `${alerta.message} - ${alerta.escola} - Solicitado por: ${alerta.solicitante} - Em: ${alerta.data_hora}`;
+            
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Fechar';
+            closeButton.onclick = () => closeAlert(alertContainer, alerta.id);
+            
+            alertContainer.appendChild(alertMessage);
+            alertContainer.appendChild(closeButton);
+            
+            const container = document.getElementById('alertContainer');
+            container.appendChild(alertContainer);
+
+            // Incrementa o número de alertas ativos e toca o som
+            activeAlerts++;
+            playAlertSound();
+
+            // Fecha o alerta automaticamente após 15 segundos
+            const alertTimeout = setTimeout(() => {
+                closeAlert(alertContainer, alerta.id);
+            }, 15000);  // 15 segundos
+
+            alertTimeouts.push({ timeout: alertTimeout, alertContainer: alertContainer });
+
+            // Marca o alerta como visto no banco de dados
+            markAlertAsSeen(alerta.id);
+        }
+
+        // Função para marcar o alerta como visto no banco de dados
+        function markAlertAsSeen(alertaId) {
+            fetch('/api/alerta/marcar_visto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    alerta_id: alertaId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Alerta marcado como visto no banco de dados');
+                } else {
+                    console.error('Erro ao marcar alerta como visto no banco de dados');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar a requisição para o servidor:', error);
+            });
+        }
+
+        // Função para fechar o alerta, seja manual ou após o tempo
+        function closeAlert(alertContainer, alertaId) {
+            // Remove o alerta do container
+            alertContainer.parentElement.removeChild(alertContainer);
+
+            // Decrementa o número de alertas ativos
+            activeAlerts--;
+
+            // Se não houver mais alertas ativos, para o som
+            if (activeAlerts === 0) {
+                alertAudio.pause();  // Para o áudio
+                alertAudio.currentTime = 0;  // Reinicia o áudio
+            }
+
+            // Remove o timeout associado ao alerta
+            const timeoutIndex = alertTimeouts.findIndex(timeout => timeout.alertContainer === alertContainer);
+            if (timeoutIndex !== -1) {
+                clearTimeout(alertTimeouts[timeoutIndex].timeout);
+                alertTimeouts.splice(timeoutIndex, 1);
+            }
+
+            // Marca o alerta como visto no banco de dados
+            markAlertAsSeen(alertaId);
+        }
+
+        // Função para carregar os alertas
+        function loadAlerts() {
+            fetch('/get_alerts')  // Atualizado para o endpoint correto, que é /get_alerts
+                .then(response => response.json())
+                .then(alerts => {
+                    alerts.forEach(alerta => {
+                        showAlert(alerta);  // Exibe os alertas não vistos
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar os alertas:', error);
+                });
+        }
+
+        // Atualiza a lista de alertas a cada 5 segundos
+        setInterval(loadAlerts, 5000);
+
+    </script>
+
+</body>
+</html>
+
+
+
+    
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Relatórios{% endblock %}
+{% block first_title %}User{% endblock %}
+{% block main_title%}Relatórios{% endblock %}
+{% block sub_title %}Relatórios{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <p>{{ msg }}</p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Biblioteca Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        :root {
+        --poppins: 'Poppins', sans-serif;
+        --light: #F9F9F9;
+        --blue: #3c91e6;
+        --light-blue: #CFE8FF;
+        --grey: #eee;
+        --dark-grey: #AAAAAA;
+        --dark: #342E37;
+        --red: #DB504A;
+        --yellow: #FFCE26;
+        --light-yellow: #FFF2C6;
+        --orange: #FD7238;
+        --light-orange: #FFE0F3;
+        }
+        .grafico-container{
+        display: flex; 
+        gap: 20px; 
+        justify-content: center; 
+        margin: 20px 0;
+        background-color: #ffffff;
+        border-radius: 15px;
+        padding-top: 15px;
+        
+
+    }
+    #layout{
+        flex: 1 1 50%; max-width: 400px;
+    }
+    /* ...seu CSS já existente... */
+
+    @media (max-width: 800px) {
+        .grafico-container {
+             
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            padding-top: 5px;
+            margin-top: 3px;
+        }
+        #layout{
+            flex: 1 1 50%;
+            max-width: 200px;
+        }
+    }
+        
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center; color: rgb(43, 41, 41); margin-top: 10px;">Gráficos</h2>
+
+    <!-- Container para os gráficos -->
+    <div class="grafico-container">
+        <!-- Gráfico de barras -->
+        <div id="layout">
+            <p style="text-align: center;">Últimos Três Meses</p>
+            <div>
+                <canvas id="graficoBarras"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico de linhas -->
+        <div id="layout">
+            <p style="text-align: center;">Últimos Três Anos</p>
+            <div>
+                <canvas id="graficoLinhas"></canvas>
+            </div>
+            
+            <canvas id="graficoLinhas"></canvas>
+        </div>
+        
+    </div>
+
+    <script>
+        // Primeiro gráfico: barras
+        fetch("/api/alertas_3_meses")
+            .then(response => response.json())
+            .then(data => {
+                const ctx1 = document.getElementById('graficoBarras').getContext('2d');
+                new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Alertas',
+                            data: data.valores,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            });
+
+        // Segundo gráfico: alertas últimos 3 anos
+        fetch("/api/alertas_3_anos")
+            .then(response => response.json())
+            .then(data => {
+                const ctx2 = document.getElementById('graficoLinhas').getContext('2d');
+                new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: data.anos,
+                        datasets: [{
+                            label: 'Alertas',
+                            data: data.quantidade,
+                            borderColor: 'rgba(255, 99, 132, 0.8)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            });
+    </script>
+  
+</body>
+</html>
+
+{% endblock %}

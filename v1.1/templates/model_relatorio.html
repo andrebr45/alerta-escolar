@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Geral</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            justify-content: center;
+            display: flex;
+            width:100%;
+            text-align: center;
+        } 
+        td,th {
+            padding: 5px;
+            border: 0.01px solid black;     
+        }
+        table {
+        border-spacing: 0;
+        position: fixed;
+        top: auto;
+        margin-left: 32%;
+       }
+        #data {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img src="/static/images/logo.png" width=50>
+        <h2>Secretaria Municipal de Educação de Ubatuba</h2>
+        <br>
+        <h3>RELATÓRIO GERAL</h3>
+        
+        <div>
+            <table>
+                <p>Alertas gerados nos últimos Três Anos</p>
+                <thead>
+                    <tr style="background-color: #f0f0f0;">
+                        <th>Ano Referência</th>
+                        <th>Total de Alertas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ano, quantidade in anos %}
+                    <tr>
+                        <td>{{ ano }}</td>
+                        <td>{{ quantidade }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <table>
+                <p>Alertas gerados nos últimos Três Meses</p>
+                <thead>
+                    <tr style="background-color: #f0f0f0;">
+                        <th>Mês Referência</th>
+                        <th>Total de Alertas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mes, quantidade in meses %}
+                    <tr>
+                        <td>{{ mes }}</td>
+                        <td>{{ quantidade }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <table style="margin-left: 39.5%;">
+                <p>Informações Gerais do Sistema</p>
+                <thead>
+                    <tr style="background-color: #f0f0f0;">
+                        <th>Informação</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Usuários</td>
+                        <td>{{ gerais.usuarios }}</td>
+                    </tr>
+                    <tr>
+                        <td>Dispositivos</td>
+                        <td>{{ gerais.dispositivos }}</td>
+                    </tr>
+                    <tr>
+                        <td>Alertas Total</td>
+                        <td>{{ gerais.alertas_total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <br>
+        <h3>Versão do sistema 1.1.2</h3>
+        <h5>Relatório Gerado no dia {{ data_geracao }} às {{ hora_geracao }}</h5>
+    </div>
+</body>
+</html>

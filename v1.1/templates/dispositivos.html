@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block main_title %}Dispositivos{% endblock %}
+{% block first_title %}User{% endblock %}
+{% block sub_title %}Dispositivos{% endblock %}
+{% block title %}Dispositivos{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link href="{{ url_for('static', filename='styles/dispositivos.css') }}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+    <div class="navegacao-menu-dispositivos">
+        <div>
+           <!-- Filtro -->
+           <select id="filtroOpcao">
+                <option value="1">Filtrar por MAC</option>
+                <option value="2">Filtrar por Usuário</option>
+                <option value="3">Filtrar por Escola</option>
+            </select>
+        </div>
+        <div id="pesquisa-dispositivo">
+            <input type="text" id="myInput" onkeyup="filtrarTabela()" placeholder="Pesquisar por MAC...">
+            <span id="icon-pesquisa" class="material-symbols-outlined">search</span>
+        </div>
+        <div>
+            
+            <a id="btn-dispositivo" href="/cadastro" disabled>Novo Dispositivo <span class="material-symbols-outlined">
+                add
+                </span></a>
+        </div>
+    </div>
+    <div>
+    <table id="tabelaDispositivos">
+        <thead>
+            <tr>
+                <th></th>
+                <th>MAC do Dispositivo</th>
+                <th>Usuário</th>
+                <th>Alertas</th>
+                <th>Dispositivo</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="corpoTabela">
+        <!-- Aqui serão inseridos os alunos -->
+        <!--{% for usuario in usuarios %}-->
+            <!--<h2>{{ usuario.name }}</h2>-->
+        <!--{% endfor %}-->
+        </tbody>
+    </table>
+    
+    <div id="menu-paginacao">
+        <div>
+            <h2 id="quantidadeDispositivos"></h2>
+        </div>
+        <div class="pagination" id="paginacao">
+            <!-- Aqui serão inseridos os links de paginação -->
+        </div>
+    </div>
+     <!-- Javascript -->
+    <script src="{{ url_for('static', filename='js/dispositivos.js') }}"></script>
+ 
+</body>
+</html>
+{% endblock %}
+
